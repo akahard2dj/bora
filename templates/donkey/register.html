@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Donkey</title>
+	</head>
+
+	<body>
+		<h1>Register with Donkey</h1>
+
+		{% if registered %}
+		Donkey says: <strong>thank you for registration!</strong>
+		<a href="/donkey/">Return to the donkey</a><br />
+		{% else %}
+		Donkey says: <strong>Register here!</strong><br />
+
+		<form id="userform" method="post" action="/donkey/register/" enctype="multipart/form-data">
+			{% csrf_token %}
+			{{ user_form.as_p }}
+			{{ profile_form.as_p }}
+
+			<input type="submit" name="submit" value="Register" />
+		</form>
+		{% endif %}
+	</body>
+</html>

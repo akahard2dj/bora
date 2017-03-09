@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>BORA Donkey</title>
+	</head>
+
+	<body>
+		{% if user.is_authenticated %}
+		<h1>Donkey says...Hello {{ user.username }}</h1>
+		{% if categories %}
+			<ul>
+				{% for category in categories %}
+				<li><a href="{% url 'category' category_name=category.name %}">{{ category.name }}</a></li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			<strong>There are no categories present.</strong>
+		{% endif %}
+		{% else %}
+		<h1>Donkey says...Hello</h1>
+		{% endif %}
+
+		{% if user.is_authenticated %}
+		<a href="/donkey/logout/">Logout</a>
+		{% else %}
+		<a href="/donkey/login/">Login</a>
+		{% endif %}
+		<a href="/donkey/register/">Register</a>
+		<a href="/donkey/about/">About</a><br />
+	</body>
+</html>
+
