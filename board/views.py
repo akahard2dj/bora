@@ -106,7 +106,7 @@ def add_post(request, category_name):
                 print('post', post)
                 post.category = cat
                 post.save()
-                return HttpResponseRedirect('/donkey/category/{}/'.format(category))
+                return HttpResponseRedirect('/donkey/category/{}/'.format(cat))
         else:
             print(form.errors)
     else:
