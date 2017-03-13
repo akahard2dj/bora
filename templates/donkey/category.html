@@ -10,7 +10,7 @@
 			{% if posts %}
 			<ul>
 				{% for post in posts %}
-				<li><a href="{{ post.url }}">{{ post.title }}</a></li>
+				<li><a href="/donkey/category/{{ category_name }}/{{ post.id }}">{{ post.title }}</a> {{ post.views }}</li>
 				{% endfor %}
 			</ul>
 			{% else %}
@@ -19,6 +19,6 @@
 		{% else %}
 			The specified category {{ category_name }} does not exists!
 		{% endif %}
-		<a href="/donkey/category/{{ category_name }}/add_page/">Add a New Post</a><br />
+		<a href="/donkey/category/{{ category_name }}/add_post/">Add a New Post</a><br />
 	</body>
 </html>
