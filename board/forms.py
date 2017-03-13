@@ -10,7 +10,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ('category', 'views', )
+        exclude = ('category', 'views', 'user', )
 
 
 class UserForm(forms.ModelForm):
