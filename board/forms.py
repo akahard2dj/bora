@@ -4,14 +4,13 @@ from board.models import Post
 from board.models import UserProfile
 
 
-
 class PostForm(forms.ModelForm):
     title = forms.CharField(max_length=200)
     content = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Post
-        exclude = ('category',)
+        exclude = ('category', 'views', )
 
 
 class UserForm(forms.ModelForm):
