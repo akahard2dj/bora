@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -15,6 +15,7 @@ def index(request):
 
     return render(request, 'donkey/index.html', context_dict)
 
+
 def about(request):
     return HttpResponse("BORA Donkey")
 
@@ -24,13 +25,13 @@ def category(request, category_name):
     context_dict = {}
 
     try:
-        category = Category.objects.get(name=category_name)
-        context_dict['category_name'] = category.name
+        cat = Category.objects.get(name=category_name)
+        context_dict['category_name'] = cat.name
 
-        posts = Post.objects.filter(category=category)
+        posts = Post.objects.filter(category=cat)
 
         context_dict['posts'] = posts
-        context_dict['category'] = category
+        context_dict['category'] = cat
 
     except Category.DoesNotExist:
         pass
@@ -56,12 +57,13 @@ def register(request):
             registered = True
 
         else:
-            print(userform.errors, profile_form.errors)
+            print(user_form.errors, profile_form.errors)
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
 
     return render(request, 'donkey/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -82,33 +84,52 @@ def user_login(request):
     else:
         return render(request, "donkey/login.html", {})
 
+
 @login_required
 def user_logout(request):
     logout(request)
 
     return HttpResponseRedirect('/donkey/')
 
+
 def add_post(request, category_name):
     try:
-        category = Category.objects.get(name=category_name)
+        cat = Category.objects.get(name=category_name)
     except Category.DoesNotExist:
-        category = None
+        cat = None
 
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            if category:
+            if cat:
                 post = form.save(commit=False)
-                post.category = category
+                print('post', post)
+                post.category = cat
                 post.save()
-                return category(request, category_name)
+                return HttpResponseRedirect('/donkey/category/{}/'.format(category))
         else:
             print(form.errors)
     else:
         form = PostForm()
 
-    context_dict = {'form': form, 'category': category}
+    context_dict = {'form': form, 'category': cat}
 
-    return render(request, 'donkey/add_page.html', context_dict)
+    return render(request, 'donkey/add_post.html', context_dict)
+
+
+def post_detail(request, category_name, pk):
+    try:
+        cat = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        cat = None
+
+    post = get_object_or_404(Post, pk=pk)
+    if post.category == cat:
+        views = post.views
+        post.views = views + 1
+        post.save()
+        return render(request, 'donkey/post_detail.html', {'post': post, 'category': cat})
+    else:
+        return HttpResponse('Invalid PK')
 
 
