@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Donkey</title>
+	</head>
+
+	<body>
+		<h2>Title : {{ post.title }}</h2>
+        <h1>Date : {{ post.modified_at }}</h1>
+        <h1>Content : {{ post.content }}</h1>
+
+
+		<a href="/donkey/category/{{ category }}/">Back to Category</a><br />
+	</body>
+</html>
