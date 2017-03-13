@@ -1,9 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-from board.models import Category
+from board.models import Category, UserProfile
 from board.models import Post
 from board.forms import PostForm
 from board.forms import UserForm, UserProfileForm
@@ -93,6 +93,8 @@ def user_logout(request):
 
 
 def add_post(request, category_name):
+    current_user = UserProfile.objects.get(user=request.user)
+
     try:
         cat = Category.objects.get(name=category_name)
     except Category.DoesNotExist:
@@ -103,8 +105,8 @@ def add_post(request, category_name):
         if form.is_valid():
             if cat:
                 post = form.save(commit=False)
-                print('post', post)
                 post.category = cat
+                post.user = current_user
                 post.save()
                 return HttpResponseRedirect('/donkey/category/{}/'.format(cat))
         else:
@@ -117,6 +119,7 @@ def add_post(request, category_name):
     return render(request, 'donkey/add_post.html', context_dict)
 
 
+@login_required
 def post_detail(request, category_name, pk):
     try:
         cat = Category.objects.get(name=category_name)
@@ -133,3 +136,72 @@ def post_detail(request, category_name, pk):
         return HttpResponse('Invalid PK')
 
 
+@login_required
+def post_delete(request, category_name, pk):
+    try:
+        cat = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        cat = None
+
+    post = get_object_or_404(Post, pk=pk)
+    if post.category == cat:
+        post.delete()
+        return redirect('category', category_name=cat.name)
+    else:
+        return HttpResponse('Invalid PK')
+
+
+@login_required
+def post_edit(request, category_name, pk):
+    current_user = UserProfile.objects.get(user=request.user)
+    current_post = Post.objects.get(id=pk)
+
+    try:
+        cat = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        cat = None
+
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            if cat:
+                post = form.save(commit=False)
+                current_post.title = post.title
+                current_post.content = post.content
+                current_post.save()
+                return HttpResponseRedirect('/donkey/category/{}/'.format(cat))
+        else:
+            print(form.errors)
+    else:
+        form = PostForm()
+
+    context_dict = {'form': form, 'category': cat, 'post': current_post}
+
+    return render(request, 'donkey/edit_post.html', context_dict)
+
+'''
+current_user = UserProfile.objects.get(user=request.user)
+
+    try:
+        cat = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        cat = None
+
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            if cat:
+                post = form.save(commit=False)
+                post.category = cat
+                post.user = current_user
+                post.save()
+                return HttpResponseRedirect('/donkey/category/{}/'.format(cat))
+        else:
+            print(form.errors)
+    else:
+        form = PostForm()
+
+    context_dict = {'form': form, 'category': cat}
+
+    return render(request, 'donkey/add_post.html', context_dict)
+'''

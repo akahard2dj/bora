@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Donkey Posting...</title>
+	</head>
+
+	<body>
+		<form id="login_form" method="post" action="/donkey/category/{{ category }}/{{ post.id }}/edit/">
+			{% csrf_token %}
+            Post Title: <input type="text" name="title" size="50" value="{{ post.title }}" required/>
+            <br />
+            Post Content: <textarea name="content" rows="10" cols="50" required>{{ post.content }}</textarea>
+            <br />
+            <a href="/donkey/category/{{ category }}/{{ post.id }}/">cancel</a>
+            <input type="submit" value="Submit edting" /><br />
+		</form>
+	</body>
+</html>
