@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Donkey Posting...</title>
+	</head>
+
+	<body>
+		<form id="login_form" method="post" action="/donkey/category/{{ category }}/add_post/">
+			{% csrf_token %}
+            Post Title: <input type="text" name="title" size="50" required/>
+            <br />
+            Post Content: <textarea name="content" rows="10" cols="50" required></textarea>
+            <br />
+            <input type="submit" value="Posting" />
+		</form>
+	</body>
+</html>
