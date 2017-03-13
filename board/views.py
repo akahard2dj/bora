@@ -8,9 +8,17 @@ from board.models import Post
 from board.forms import PostForm
 from board.forms import UserForm, UserProfileForm
 
+from itertools import chain
 
 def index(request):
-    category_list = Category.objects.all()[:5]
+    if request.user.is_anonymous():
+        category_list = None
+    else:
+        current_user = UserProfile.objects.get(user=request.user)
+        category_list1 = Category.objects.filter(name=current_user.user.groups.all()[0])
+        cat2 = Category.objects.filter(name='BUniv')
+        category_list = list(chain(category_list1, cat2))
+
     context_dict = {'categories': category_list}
 
     return render(request, 'donkey/index.html', context_dict)
@@ -178,30 +186,3 @@ def post_edit(request, category_name, pk):
     context_dict = {'form': form, 'category': cat, 'post': current_post}
 
     return render(request, 'donkey/edit_post.html', context_dict)
-
-'''
-current_user = UserProfile.objects.get(user=request.user)
-
-    try:
-        cat = Category.objects.get(name=category_name)
-    except Category.DoesNotExist:
-        cat = None
-
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            if cat:
-                post = form.save(commit=False)
-                post.category = cat
-                post.user = current_user
-                post.save()
-                return HttpResponseRedirect('/donkey/category/{}/'.format(cat))
-        else:
-            print(form.errors)
-    else:
-        form = PostForm()
-
-    context_dict = {'form': form, 'category': cat}
-
-    return render(request, 'donkey/add_post.html', context_dict)
-'''

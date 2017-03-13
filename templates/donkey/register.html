@@ -9,11 +9,11 @@
 
 		{% if registered %}
 		Donkey says: <strong>thank you for registration!</strong>
-		<a href="/donkey/">Return to the donkey</a><br />
+		<a href="{% url 'index' %}">Return to the donkey</a><br />
 		{% else %}
 		Donkey says: <strong>Register here!</strong><br />
 
-		<form id="userform" method="post" action="/donkey/register/" enctype="multipart/form-data">
+		<form id="userform" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
 			{% csrf_token %}
 			{{ user_form.as_p }}
 			{{ profile_form.as_p }}

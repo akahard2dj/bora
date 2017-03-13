@@ -11,13 +11,13 @@
         	<h1>Content : {{ post.content }}</h1>
 
         {% if user.username == post.user.user.username %}
-            <a href="/donkey/category/{{ category }}/{{ post.id }}/delete/">Delete</a>
-            <a href="/donkey/category/{{ category }}/{{ post.id }}/edit/">Edit</a>
+            <a href="/donkey/category/{{ category.name }}/{{ post.id }}/delete/">Delete</a>
+            <a href="/donkey/category/{{ category.name }}/{{ post.id }}/edit/">Edit</a>
 
         {% endif %}
 
 
 
-		<a href="/donkey/category/{{ category }}/">Back to Category</a><br />
+		<a href="{% url 'category' category_name=category.name %}">Back to Category</a><br />
 	</body>
 </html>
